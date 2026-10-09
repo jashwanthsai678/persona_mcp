@@ -57,6 +57,11 @@ def build_mcp_url(request: Request, token: str) -> str:
 # ---------------------------------------------------------------------------
 
 
+@app.get("/demo", response_class=HTMLResponse)
+def demo_page(request: Request):
+    return templates.TemplateResponse(request, "demo.html", {"user": None})
+
+
 @app.get("/signup", response_class=HTMLResponse)
 def signup_form(request: Request):
     return templates.TemplateResponse(request, "signup.html", {"error": None})

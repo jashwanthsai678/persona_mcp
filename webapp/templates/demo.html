@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Persona MCP - See a real example</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] } } },
+    };
+  </script>
+  <style>
+    body { background-color: #09090b; font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+    .spotlight { background: radial-gradient(ellipse at top, rgba(99,102,241,0.18) 0%, rgba(9,9,11,0) 60%); }
+    .card-hover { transition: all 300ms ease; }
+    .card-hover:hover { border-color: rgb(63 63 70); }
+    .btn { transition: background-color 200ms ease, transform 200ms ease, opacity 200ms ease; }
+    .btn:active { transform: scale(0.96); }
+    a:focus-visible, button:focus-visible { outline: 2px solid rgb(129 140 248); outline-offset: 2px; }
+    .step-num { flex-shrink: 0; }
+  </style>
+</head>
+<body class="font-sans bg-zinc-950 text-zinc-300 antialiased">
+
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-zinc-950/70 border-b border-white/5">
+    <nav class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="/" class="text-white font-semibold tracking-tight">Persona MCP</a>
+      <div class="flex items-center gap-2">
+        <a href="/login" class="px-4 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:bg-zinc-900 hover:text-white">Log in</a>
+        <a href="/signup" class="btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-zinc-950 hover:bg-zinc-200">Sign up</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="relative spotlight">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 pt-16 pb-10 text-center">
+      <a href="/" class="text-zinc-500 hover:text-zinc-300 text-sm">&larr; Back</a>
+      <h1 class="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-white">
+        This isn't a mockup - it's a real persona, running right now
+      </h1>
+      <p class="mt-4 text-zinc-400 max-w-xl mx-auto">
+        Below is exactly what happens for a persona called "Radhima": what was
+        uploaded, what the platform learned, what a real conversation looks
+        like, and the actual live link you could connect yourself.
+      </p>
+    </div>
+  </section>
+
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 pb-24 space-y-5">
+
+    <!-- Step 1: Bio -->
+    <div class="card-hover rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm p-6">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="step-num flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20">1</span>
+        <h2 class="text-zinc-100 font-medium">The biography that was written</h2>
+      </div>
+      <p class="text-zinc-400 text-sm leading-relaxed italic">
+        "Radhima is my (Sai's) girlfriend of about two years. We met through mutual
+        friends at a rooftop birthday party and started talking because we both
+        hated the music playing... She's the one who keeps our relationship
+        organized... Big plant person, mostly unsuccessfully (see: the basil
+        incident, which is ongoing and has never once gone well). Runs on chai,
+        not coffee, and will debate anyone who disagrees."
+      </p>
+    </div>
+
+    <!-- Step 2: Upload -->
+    <div class="card-hover rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm p-6">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="step-num flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20">2</span>
+        <h2 class="text-zinc-100 font-medium">What was uploaded</h2>
+      </div>
+      <p class="text-zinc-400 text-sm leading-relaxed">
+        A WhatsApp-style chat export spanning about two months - morning
+        check-ins, a stressful work day, a sick day, an honest conversation
+        about withdrawing when overwhelmed, game nights, and a running joke
+        about a basil plant that refuses to live.
+      </p>
+    </div>
+
+    <!-- Step 3: Processed -->
+    <div class="card-hover rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm p-6">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="step-num flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20">3</span>
+        <h2 class="text-zinc-100 font-medium">What the platform did with it</h2>
+        <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400">ready</span>
+      </div>
+      <p class="text-zinc-400 text-sm leading-relaxed">
+        Processed 119 messages into 22 memories, and learned a style profile:
+        warm and upbeat tone, catchphrases like "babe", "lol", "omg", medium-length
+        messages, occasional ALL CAPS for emphasis - all from the writing itself,
+        no manual tagging.
+      </p>
+    </div>
+
+    <!-- Step 4: Example conversation -->
+    <div class="card-hover rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm p-6">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="step-num flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20">4</span>
+        <h2 class="text-zinc-100 font-medium">What a conversation actually looks like</h2>
+      </div>
+      <p class="text-zinc-500 text-xs mb-4">
+        Illustrative example below, written to match the real retrieved
+        memories and style profile shown above - this is what Claude would
+        write using the context this persona's tools return.
+      </p>
+
+      <div class="space-y-3">
+        <div class="flex justify-end">
+          <div class="bg-indigo-600 text-white text-sm rounded-2xl rounded-br-sm px-4 py-2 max-w-[80%]">
+            hows the goa trip planning going
+          </div>
+        </div>
+        <div class="flex justify-start">
+          <div class="bg-zinc-800 text-zinc-100 text-sm rounded-2xl rounded-bl-sm px-4 py-2 max-w-[80%]">
+            omg SO good, I booked the hotel with the pool like I obviously was
+            always going to lol. 9 days to go and I've already packed, don't
+            @ me about it being early
+          </div>
+        </div>
+        <div class="flex justify-end">
+          <div class="bg-indigo-600 text-white text-sm rounded-2xl rounded-br-sm px-4 py-2 max-w-[80%]">
+            did the basil situation ever improve
+          </div>
+        </div>
+        <div class="flex justify-start">
+          <div class="bg-zinc-800 text-zinc-100 text-sm rounded-2xl rounded-bl-sm px-4 py-2 max-w-[80%]">
+            lol no. it's dying again. I water it, I talk to it, I give it sun
+            and it STILL doesn't respect me. I've accepted defeat, science
+            has failed me on this one
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: The real link -->
+    <div class="card-hover rounded-2xl border border-indigo-500/30 bg-zinc-900/30 backdrop-blur-sm p-6">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="step-num flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20">5</span>
+        <h2 class="text-zinc-100 font-medium">The real, live link for this persona</h2>
+      </div>
+      <code class="block p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-300 text-sm break-all">https://persona-mcp.onrender.com/mcp/593e8bf06fc6db5f2e4203ae0a297c6c96aaa06030a105e927c155cd7501675d/</code>
+    </div>
+
+    <!-- Step 6: Connect to Claude -->
+    <div class="card-hover rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm p-6">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="step-num flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20">6</span>
+        <h2 class="text-zinc-100 font-medium">Connect it in Claude</h2>
+      </div>
+      <ol class="text-zinc-400 text-sm leading-relaxed list-decimal list-inside space-y-1">
+        <li>Open Claude (claude.ai or Claude Desktop) and go to <strong class="text-zinc-300">Settings → Connectors</strong></li>
+        <li>Choose <strong class="text-zinc-300">Add custom connector</strong></li>
+        <li>Paste the link from step 5 as the connector's remote server URL</li>
+        <li>Save, then enable it for your conversation</li>
+        <li>Ask Claude something like <em>"ask Radhima how the Goa trip is going"</em></li>
+      </ol>
+    </div>
+
+  </section>
+
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 pb-28">
+    <div class="relative rounded-2xl border border-zinc-800 bg-gradient-to-b from-zinc-900 to-zinc-900/40 text-center px-8 py-14 overflow-hidden">
+      <div class="spotlight absolute inset-0 -z-10"></div>
+      <h2 class="text-2xl font-bold tracking-tight text-white mb-3">Now build your own</h2>
+      <p class="text-zinc-400 mb-8">Free to start. No credit card required.</p>
+      <a href="/signup" class="btn inline-block px-6 py-3 rounded-lg text-sm font-semibold bg-white text-zinc-950 hover:bg-zinc-200 shadow-sm shadow-indigo-500/20">
+        Create a persona
+      </a>
+    </div>
+  </section>
+
+</body>
+</html>
