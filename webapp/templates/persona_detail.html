@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ persona.name }}{% endblock %}
+{% block content %}
+<p><a href="/" class="muted">&larr; Back to dashboard</a></p>
+
+<div class="card">
+  <h2>{{ persona.name }}
+    <span class="status-pill status-{{ persona.status }}">{{ persona.status }}</span>
+  </h2>
+  {% if persona.status_message %}<p class="muted">{{ persona.status_message }}</p>{% endif %}
+
+  <h3>1. Biography / relationship context</h3>
+  <form method="post" action="/personas/{{ persona.id }}/bio">
+    <textarea name="bio" placeholder="Who are they? How do you know them? Anything the assistant should know.">{{ bio_text }}</textarea>
+    <button type="submit">Save biography</button>
+  </form>
+
+  <h3>2. Upload data</h3>
+  <form method="post" action="/personas/{{ persona.id }}/upload" enctype="multipart/form-data">
+    <label>Chat export / notes (.txt or .md, multiple allowed)</label>
+    <input type="file" name="files" multiple required accept=".txt,.md">
+    <label>Exact sender name in the export (optional - auto-detected if left blank)</label>
+    <input type="text" name="target_sender" placeholder="e.g. Grandma Rose">
+    <button type="submit">Upload &amp; process</button>
+  </form>
+  <p class="muted">Re-uploading replaces the previous memory for this persona.</p>
+
+  <h3>3. Connect</h3>
+  {% if persona.status == "ready" %}
+    <p>Paste this URL into Claude, ChatGPT, or any MCP-compatible client as a remote MCP server:</p>
+    <code class="mcp-link">{{ mcp_url }}</code>
+  {% else %}
+    <p class="muted">The MCP link will work once processing finishes, but here it is already if you want to connect early:</p>
+    <code class="mcp-link">{{ mcp_url }}</code>
+  {% endif %}
+
+  <h3 style="margin-top:28px;">Danger zone</h3>
+  <form method="post" action="/personas/{{ persona.id }}/delete" onsubmit="return confirm('Delete this persona and all its memories permanently?');">
+    <button type="submit" class="danger">Delete persona</button>
+  </form>
+</div>
+{% endblock %}

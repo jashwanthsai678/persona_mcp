@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Persona MCP - Keep someone's memories close, anywhere you chat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background-color: #09090b; font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+    .spotlight {
+      background: radial-gradient(ellipse at top, rgba(99,102,241,0.18) 0%, rgba(9,9,11,0) 60%);
+    }
+    .card-hover { transition: all 300ms ease; }
+    .card-hover:hover { border-color: rgb(63 63 70); transform: translateY(-4px); }
+    .btn { transition: background-color 200ms ease, transform 200ms ease, opacity 200ms ease; }
+    .btn:active { transform: scale(0.96); }
+    .link-fade { transition: color 200ms ease, background-color 200ms ease; }
+    a:focus-visible, button:focus-visible { outline: 2px solid rgb(129 140 248); outline-offset: 2px; }
+  </style>
+</head>
+<body class="font-sans bg-zinc-950 text-zinc-300 antialiased">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-zinc-950/70 border-b border-white/5">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="/" class="text-white font-semibold tracking-tight">Persona MCP</a>
+      <div class="flex items-center gap-2">
+        <a href="/login" class="link-fade px-4 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:bg-zinc-900 hover:text-white">Log in</a>
+        <a href="/signup" class="btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-zinc-950 hover:bg-zinc-200">Sign up</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="relative spotlight bg-gradient-to-b from-indigo-900/10 via-zinc-950 to-zinc-950">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-28 text-center">
+      <h1 class="text-4xl sm:text-6xl font-bold tracking-tight leading-tight
+                 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+        Keep someone's memories close -
+        in every AI conversation you already have.
+      </h1>
+      <p class="mt-6 mb-8 text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+        Upload messages, notes, or memories of someone who matters to you.
+        We learn how they write, what they remember, and who they are to you -
+        then bring that into Claude, ChatGPT, or any AI you use.
+      </p>
+      <div class="flex items-center justify-center gap-3">
+        <a href="/signup"
+           class="btn px-6 py-3 rounded-lg text-sm font-semibold bg-white text-zinc-950 hover:bg-zinc-200 shadow-sm shadow-indigo-500/20">
+          Create a persona - free
+        </a>
+        <a href="/login"
+           class="btn px-6 py-3 rounded-lg text-sm font-semibold bg-zinc-900 text-zinc-300 border border-zinc-800 hover:bg-zinc-800">
+          Log in
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <h2 class="text-3xl font-bold tracking-tight text-white text-center mb-14">How it works</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="card-hover rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm p-6 text-left">
+        <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 text-sm font-semibold border border-indigo-500/20 mb-4">1</span>
+        <h3 class="text-zinc-100 font-medium mb-2">Upload what you have</h3>
+        <p class="text-zinc-400 text-sm leading-normal">A WhatsApp export, texts, notes - whatever captures
+          how they wrote and what they shared. Add a short bio for context
+          chat history alone won't cover.</p>
+      </div>
+      <div class="card-hover rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm p-6 text-left">
+        <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 text-sm font-semibold border border-indigo-500/20 mb-4">2</span>
+        <h3 class="text-zinc-100 font-medium mb-2">We learn their style</h3>
+        <p class="text-zinc-400 text-sm leading-normal">Their tone, catchphrases, the things they talked
+          about - turned into a private memory that's never shared or seen
+          by anyone but you.</p>
+      </div>
+      <div class="card-hover rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm p-6 text-left">
+        <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 text-sm font-semibold border border-indigo-500/20 mb-4">3</span>
+        <h3 class="text-zinc-100 font-medium mb-2">Connect, anywhere</h3>
+        <p class="text-zinc-400 text-sm leading-normal">You get one private link. Paste it into Claude,
+          ChatGPT, or any MCP-compatible AI, and they're part of that
+          conversation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- What you actually get -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <h2 class="text-3xl font-bold tracking-tight text-white text-center mb-14">What you actually get</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+      <div class="card-hover rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm p-6">
+        <svg class="w-6 h-6 text-indigo-400 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+        </svg>
+        <h3 class="text-zinc-100 font-medium mb-2">Not a transcript replay - a real conversation</h3>
+        <p class="text-zinc-400 text-sm leading-normal">Ask a question, share news, just talk. Responses
+          are generated in their style and draw on real memories, not a
+          canned script.</p>
+      </div>
+
+      <div class="card-hover rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm p-6">
+        <svg class="w-6 h-6 text-indigo-400 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          <circle cx="12" cy="12" r="4"/>
+        </svg>
+        <h3 class="text-zinc-100 font-medium mb-2">It keeps growing</h3>
+        <p class="text-zinc-400 text-sm leading-normal">Every conversation can add new memories - so a year
+          from now, it still "remembers" what you said last month. That
+          memory lives on our platform, not in one chat app.</p>
+      </div>
+
+      <div class="card-hover rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm p-6">
+        <svg class="w-6 h-6 text-indigo-400 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h1M9 8V5a3 3 0 0 1 6 0v3"/>
+          <circle cx="12" cy="13" r="1.5"/>
+        </svg>
+        <h3 class="text-zinc-100 font-medium mb-2">Private by default</h3>
+        <p class="text-zinc-400 text-sm leading-normal">Your uploads and memories are yours. Your persona's
+          link is a private, unguessable URL. Delete a persona any time,
+          permanently.</p>
+      </div>
+
+      <div class="card-hover rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm p-6">
+        <svg class="w-6 h-6 text-indigo-400 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 3H5a2 2 0 0 0-2 2v4m18 0V5a2 2 0 0 0-2-2h-4m0 18h4a2 2 0 0 0 2-2v-4M3 15v4a2 2 0 0 0 2 2h4"/>
+        </svg>
+        <h3 class="text-zinc-100 font-medium mb-2">Works where you already are</h3>
+        <p class="text-zinc-400 text-sm leading-normal">No new app to learn. It shows up as part of the AI
+          workspace you already use every day.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA band -->
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-28">
+    <div class="relative rounded-2xl border border-zinc-800 bg-gradient-to-b from-zinc-900 to-zinc-900/40 text-center px-8 py-16 overflow-hidden">
+      <div class="spotlight absolute inset-0 -z-10"></div>
+      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-3">
+        Create your first persona in a few minutes
+      </h2>
+      <p class="text-zinc-400 mb-8">Free to start. No credit card required.</p>
+      <a href="/signup"
+         class="btn inline-block px-6 py-3 rounded-lg text-sm font-semibold bg-white text-zinc-950 hover:bg-zinc-200 shadow-sm shadow-indigo-500/20">
+        Get started
+      </a>
+    </div>
+  </section>
+
+  <footer class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 border-t border-white/5 text-center">
+    <p class="text-sm text-zinc-500">Built for the people you don't want to lose touch with.
+      Your data stays private and is never used to train anything beyond your own persona.</p>
+  </footer>
+
+</body>
+</html>
