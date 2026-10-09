@@ -4,61 +4,78 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Persona MCP{% endblock %}</title>
-  <style>
-    :root { color-scheme: light dark; }
-    body {
-      font-family: -apple-system, Segoe UI, Roboto, sans-serif;
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 24px 16px 64px;
-      line-height: 1.5;
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <style type="text/tailwindcss">
+    @layer base {
+      body { @apply font-sans bg-zinc-950 text-zinc-300 antialiased; }
+      label { @apply block text-sm font-medium text-zinc-200 mt-4 mb-1.5; }
+      textarea { @apply min-h-[140px] font-sans; }
     }
-    nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
-    nav a { text-decoration: none; font-weight: 600; }
-    .card { border: 1px solid rgba(128,128,128,0.3); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
-    label { display: block; font-weight: 600; margin: 12px 0 4px; }
-    input[type=text], input[type=email], input[type=password], textarea {
-      width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(128,128,128,0.4);
-      font-size: 14px; box-sizing: border-box;
+    @layer components {
+      .card {
+        @apply rounded-2xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm p-6 mb-6;
+      }
+      .field {
+        @apply w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-100 text-sm
+               placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/60 transition-colors duration-200;
+      }
+      .btn {
+        @apply inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-semibold
+               transition-all duration-200 active:scale-95 cursor-pointer no-underline;
+      }
+      .btn-primary { @apply btn bg-white text-zinc-950 hover:bg-zinc-200; }
+      .btn-secondary { @apply btn bg-zinc-900 text-zinc-300 border border-zinc-800 hover:bg-zinc-800; }
+      .btn-ghost { @apply btn bg-transparent text-zinc-300 hover:bg-zinc-900 hover:text-white; }
+      .btn-danger { @apply btn bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20; }
+      .status-pill { @apply inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold; }
+      .status-ready { @apply bg-emerald-500/10 text-emerald-400; }
+      .status-processing { @apply bg-amber-500/10 text-amber-400; }
+      .status-created { @apply bg-zinc-500/10 text-zinc-400; }
+      .status-error { @apply bg-red-500/10 text-red-400; }
+      .mcp-link {
+        @apply block p-3 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm break-all;
+      }
+      .persona-row {
+        @apply flex items-center justify-between py-3 border-b border-zinc-800 last:border-b-0;
+      }
     }
-    textarea { min-height: 120px; font-family: inherit; }
-    button, .btn {
-      display: inline-block; margin-top: 14px; padding: 8px 16px; border-radius: 6px; border: none;
-      background: #2563eb; color: white; font-weight: 600; cursor: pointer; font-size: 14px;
-      text-decoration: none;
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 2px solid rgb(129 140 248); outline-offset: 2px;
     }
-    button.secondary, .btn.secondary { background: transparent; color: #2563eb; border: 1px solid #2563eb; }
-    button.danger { background: #dc2626; }
-    .error { color: #dc2626; font-size: 14px; margin-top: 8px; }
-    .muted { color: #888; font-size: 13px; }
-    .status-pill {
-      display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
-    }
-    .status-ready { background: #16a34a22; color: #16a34a; }
-    .status-processing { background: #d9770622; color: #d97706; }
-    .status-created { background: #6b728022; color: #6b7280; }
-    .status-error { background: #dc262622; color: #dc2626; }
-    code.mcp-link { display: block; padding: 10px; background: rgba(128,128,128,0.1); border-radius: 6px; word-break: break-all; font-size: 13px; }
-    .persona-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(128,128,128,0.15); }
-    .persona-row:last-child { border-bottom: none; }
   </style>
   {% block extra_head %}{% endblock %}
 </head>
 <body>
-  <nav>
-    <a href="/">Persona MCP</a>
-    {% if user %}
-      <form method="post" action="/logout" style="margin:0;">
-        <span class="muted">{{ user.email }}</span>
-        <button type="submit" class="secondary" style="margin-left:10px; margin-top:0;">Log out</button>
-      </form>
-    {% else %}
-      <span>
-        <a href="/login" class="btn secondary" style="margin-top:0;">Log in</a>
-        <a href="/signup" class="btn" style="margin-top:0;">Sign up</a>
-      </span>
-    {% endif %}
-  </nav>
-  {% block content %}{% endblock %}
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-zinc-950/70 border-b border-white/5">
+    <nav class="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="/" class="text-white font-semibold tracking-tight no-underline">Persona MCP</a>
+      {% if user %}
+        <form method="post" action="/logout" class="flex items-center gap-3 m-0">
+          <span class="text-zinc-500 text-sm">{{ user.email }}</span>
+          <button type="submit" class="btn-secondary">Log out</button>
+        </form>
+      {% else %}
+        <div class="flex items-center gap-2">
+          <a href="/login" class="btn-ghost">Log in</a>
+          <a href="/signup" class="btn-primary">Sign up</a>
+        </div>
+      {% endif %}
+    </nav>
+  </header>
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+    {% block content %}{% endblock %}
+  </main>
 </body>
 </html>

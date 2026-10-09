@@ -1,5 +1,10 @@
 """FastMCP server exposing a single persona's tools over stdio.
 
+No LLM API key needed anywhere - ask_persona returns context (style, bio,
+memories) as data; the host model (Claude Desktop, etc.) writes the actual
+in-character reply itself using its own model access. Vector memory lives in
+Qdrant (see persona_mcp/storage.py), so QDRANT_URL/QDRANT_API_KEY must be set.
+
 Run (directly, for local testing):
     uv run fastmcp dev persona_mcp/server.py
 
@@ -7,20 +12,19 @@ Run (as Claude Desktop will launch it):
     PERSONA_NAME=<name> uv run python -m persona_mcp.server
 
 Multi-tenant note: this currently loads ONE persona from module-level
-singletons via the PERSONA_NAME env var. A hosted multi-tenant version would
-replace these singletons with a per-request/per-connection lookup keyed by a
-URL path segment or bearer token, resolving to a tenant's persona directory.
+singletons via the PERSONA_NAME env var. The hosted multi-tenant version
+(webapp/mcp_multi.py) instead resolves the persona per-request from a URL
+token, backed by Supabase instead of local bio/style-profile files.
 """
 
 import os
 from datetime import datetime, timezone
 
-import anthropic
 from dotenv import load_dotenv
 from fastmcp import FastMCP
 
 from persona_mcp import config, storage
-from persona_mcp.prompts import build_persona_system_prompt
+from persona_mcp.prompts import build_persona_context
 from persona_mcp.style_profile import load_style_profile
 
 load_dotenv()
@@ -31,8 +35,6 @@ if not PERSONA_NAME:
         "PERSONA_NAME environment variable is required. "
         "Set it in your Claude Desktop MCP server config, or export it before running."
     )
-
-GENERATION_MODEL = "claude-sonnet-5-5"
 
 _style_profile_path = config.get_style_profile_path(PERSONA_NAME)
 if not _style_profile_path.exists():
@@ -46,11 +48,13 @@ _bio_path = config.get_bio_path(PERSONA_NAME)
 bio_text = _bio_path.read_text(encoding="utf-8") if _bio_path.exists() else ""
 
 collection = storage.get_collection(PERSONA_NAME)
-anthropic_client = anthropic.Anthropic()
 
 SERVER_INSTRUCTIONS = f"""This server gives you access to {PERSONA_NAME}, a real person, via
-their saved memories and speaking style. Use `ask_persona` to talk to them in
-character, `recall_memory` for raw context, and `get_biography` for background.
+their saved memories and speaking style. Call `ask_persona` to get everything
+you need to respond as them - it returns their style, bio, and relevant
+memories as DATA, not a finished reply. You (the host model) write the actual
+in-character response yourself using that context. Use `recall_memory` when
+you just want raw facts, and `get_biography` for background.
 
 This server also lets you WRITE new memories back, so {PERSONA_NAME} is not
 stuck with amnesia between sessions - even a session on a different account:
@@ -71,37 +75,23 @@ mcp = FastMCP(f"persona-{PERSONA_NAME}", instructions=SERVER_INSTRUCTIONS)
 
 
 @mcp.tool
-def ask_persona(message: str) -> str:
-    """Ask the persona a question or send them a message, and get back their
-    fully in-character reply, written in their own voice and drawing on their
-    real memories where relevant. Returns the final, ready-to-show reply as
-    the persona — return this text to the user as-is, do not rewrite or
-    re-voice it yourself.
-
-    This tool only sees the `message` you pass, not the rest of the
-    conversation. If you've picked up on how the user is doing right now -
-    upset, stressed, busy/focused on something else, just chatting - include
-    that briefly in `message` (e.g. "they seem really stressed about work
-    right now" or "they're heads-down coding, just said hi in passing") so
-    the persona can respond the way a real person who knows them would.
+def ask_persona(message: str) -> dict:
+    """Get everything needed to respond to a message AS the persona: their
+    speaking style, bio, and memories relevant to this specific message -
+    returned as DATA, not a finished reply. YOU must write the actual
+    in-character response yourself using this context, in first person, as
+    if you ARE this person - do not just relay the returned fields as-is.
     """
     memory_chunks = storage.query_memories(collection, message, k=5)
-    system_prompt = build_persona_system_prompt(PERSONA_NAME, style_profile, bio_text, memory_chunks)
-
-    response = anthropic_client.messages.create(
-        model=GENERATION_MODEL,
-        max_tokens=1024,
-        system=system_prompt,
-        messages=[{"role": "user", "content": message}],
-    )
-    return response.content[0].text
+    context = build_persona_context(PERSONA_NAME, style_profile, bio_text, memory_chunks)
+    return {"persona_name": PERSONA_NAME, "context_for_reply": context}
 
 
 @mcp.tool
 def recall_memory(query: str, k: int = 5) -> list[str]:
-    """Retrieve raw memory snippets relevant to a query, without generating an
-    in-character response. Useful when you want the underlying context itself
-    rather than a styled reply.
+    """Retrieve raw memory snippets relevant to a query, with no persona
+    framing. Useful when you want the underlying facts themselves rather
+    than material to write an in-character reply.
     """
     results = storage.query_memories(collection, query, k=k)
     return [r["text"] for r in results]

@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Log in{% endblock %}
 {% block content %}
-<div class="card" style="max-width:360px; margin: 40px auto;">
-  <h2>Log in</h2>
+<div class="card max-w-sm mx-auto mt-8">
+  <h2 class="text-2xl font-bold tracking-tight text-white mb-1">Log in</h2>
+  <p class="text-zinc-500 text-sm mb-2">Welcome back.</p>
   <form method="post" action="/login">
     <label>Email</label>
-    <input type="email" name="email" required>
+    <input type="email" name="email" class="field" required>
     <label>Password</label>
-    <input type="password" name="password" required>
-    {% if error %}<p class="error">{{ error }}</p>{% endif %}
-    <button type="submit">Log in</button>
+    <input type="password" name="password" class="field" required>
+    {% if error %}<p class="text-red-400 text-sm mt-2">{{ error }}</p>{% endif %}
+    <button type="submit" class="btn-primary w-full mt-6">Log in</button>
   </form>
-  <p class="muted">No account yet? <a href="/signup">Sign up</a></p>
+  <p class="text-zinc-500 text-sm mt-5">No account yet?
+    <a href="/signup" class="text-indigo-400 hover:text-indigo-300">Sign up</a></p>
 </div>
 {% endblock %}

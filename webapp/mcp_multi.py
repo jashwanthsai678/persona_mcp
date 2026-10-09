@@ -1,35 +1,37 @@
 """Multi-tenant FastMCP app, mounted at /mcp/{token} in webapp/main.py.
 
-Unlike persona_mcp/server.py (one persona baked into module-level singletons,
-run over stdio for local testing), this resolves which persona's data to use
-on EVERY call by reading the `token` path segment out of the live HTTP
-request via FastMCP's get_http_request(). That's what lets one running
-server process many personas/users at once, each with their own unique
-/mcp/<token> URL.
+Tools are pure lookups - no generation happens on this server. ask_persona
+returns the retrieved memories + style profile + bio as a context block; the
+HOST model (the user's own Claude/ChatGPT) reads it and writes the actual
+in-character reply itself, using its own model access. This backend needs no
+Anthropic (or any other LLM) API key anywhere - only Supabase (accounts/
+persona metadata) and Qdrant (vector memory).
+
+Tenant resolution works the same way it always has: every call reads the
+`token` path segment out of the live HTTP request via FastMCP's
+get_http_request(), looks up which persona owns that token, and operates
+only on that persona's data.
 """
 
 from datetime import datetime, timezone
 
-import anthropic
 from fastmcp import FastMCP
 from fastmcp.server.dependencies import get_http_request
 
-from persona_mcp import config, storage
-from persona_mcp.prompts import build_persona_system_prompt
-from persona_mcp.style_profile import load_style_profile
-from webapp.db import Persona, get_session
-
-GENERATION_MODEL = "claude-sonnet-5-5"
-
-_anthropic_client = anthropic.Anthropic()
+from persona_mcp import storage
+from persona_mcp.prompts import build_persona_context
+from persona_mcp.style_profile import style_profile_from_dict
+from webapp.db import Persona, get_persona_by_token
 
 SERVER_INSTRUCTIONS = """This server gives you access to a specific real person, via their
 saved memories and speaking style. Call `get_biography` early in the
 conversation if you don't already know who they are.
 
-Use `ask_persona` to talk to them in character and get a fully in-character
-reply. Use `recall_memory` when you want raw context instead of a styled
-reply.
+Call `ask_persona` to get everything you need to respond as them - it
+returns their style, bio, and relevant memories as DATA, not a finished
+reply. You (the host model) write the actual in-character response yourself
+using that returned context, in first person, as if you ARE that person.
+Use `recall_memory` instead when you just want raw facts, no persona framing.
 
 This server also lets you WRITE new memories back, so the persona is not
 stuck with amnesia between sessions - even a session on a different account:
@@ -60,64 +62,43 @@ def _current_persona() -> Persona:
     if not token:
         raise PersonaLookupError("No persona token found in the connection URL.")
 
-    db = get_session()
-    try:
-        persona = db.query(Persona).filter_by(mcp_token=token).first()
-    finally:
-        db.close()
-
+    persona = get_persona_by_token(token)
     if persona is None:
         raise PersonaLookupError("This MCP link is invalid, or the persona has been deleted.")
     return persona
 
 
-def _load_bio(persona_id: str) -> str:
-    bio_path = config.get_bio_path(persona_id)
-    return bio_path.read_text(encoding="utf-8") if bio_path.exists() else ""
-
-
 @mcp.tool
-def ask_persona(message: str) -> str:
-    """Ask the persona a question or send them a message, and get back their
-    fully in-character reply, written in their own voice and drawing on their
-    real memories where relevant. Returns the final, ready-to-show reply as
-    the persona - return this text to the user as-is, do not rewrite or
-    re-voice it yourself.
-
-    This tool only sees the `message` you pass, not the rest of the
-    conversation. If you've picked up on how the user is doing right now -
-    upset, stressed, busy/focused on something else, just chatting - include
-    that briefly in `message` (e.g. "they seem really stressed about work
-    right now" or "they're heads-down coding, just said hi in passing") so
-    the persona can respond the way a real person who knows them would.
+def ask_persona(message: str) -> dict:
+    """Get everything needed to respond to a message AS the persona: their
+    speaking style, bio, and memories relevant to this specific message -
+    returned as DATA, not a finished reply. YOU must write the actual
+    in-character response yourself using this context, in first person, as
+    if you ARE this person - do not just relay the returned fields as-is to
+    the user.
     """
     persona = _current_persona()
-    if persona.status != "ready":
-        return (
-            f"'{persona.name}' isn't ready to talk yet (status: {persona.status}). "
-            "Finish uploading and processing data for this persona on the platform first."
-        )
+    if persona.status != "ready" or not persona.style_profile:
+        return {
+            "error": (
+                f"'{persona.name}' isn't ready to talk yet (status: {persona.status}). "
+                "Finish uploading and processing data for this persona on the platform first."
+            )
+        }
 
-    style_profile = load_style_profile(config.get_style_profile_path(persona.id))
-    bio_text = _load_bio(persona.id)
+    style_profile = style_profile_from_dict(persona.style_profile)
     collection = storage.get_collection(persona.id)
     memory_chunks = storage.query_memories(collection, message, k=5)
-    system_prompt = build_persona_system_prompt(persona.name, style_profile, bio_text, memory_chunks)
+    context = build_persona_context(persona.name, style_profile, persona.bio_text, memory_chunks)
 
-    response = _anthropic_client.messages.create(
-        model=GENERATION_MODEL,
-        max_tokens=1024,
-        system=system_prompt,
-        messages=[{"role": "user", "content": message}],
-    )
-    return response.content[0].text
+    return {"persona_name": persona.name, "context_for_reply": context}
 
 
 @mcp.tool
 def recall_memory(query: str, k: int = 5) -> list[str]:
-    """Retrieve raw memory snippets relevant to a query, without generating an
-    in-character response. Useful when you want the underlying context itself
-    rather than a styled reply.
+    """Retrieve raw memory snippets relevant to a query, with no persona
+    framing. Useful when you want the underlying facts themselves rather
+    than material to write an in-character reply.
     """
     persona = _current_persona()
     collection = storage.get_collection(persona.id)
@@ -129,8 +110,7 @@ def recall_memory(query: str, k: int = 5) -> list[str]:
 def get_biography() -> str:
     """Return the persona's static biography / relationship context."""
     persona = _current_persona()
-    bio_text = _load_bio(persona.id)
-    return bio_text or f"No biography has been written yet for {persona.name}."
+    return persona.bio_text or f"No biography has been written yet for {persona.name}."
 
 
 @mcp.tool

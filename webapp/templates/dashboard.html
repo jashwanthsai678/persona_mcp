@@ -2,26 +2,29 @@
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 <div class="card">
-  <h2>New persona</h2>
-  <form method="post" action="/personas">
-    <label>Name</label>
-    <input type="text" name="name" placeholder="e.g. Grandma" required>
-    <button type="submit">Create</button>
+  <h2 class="text-lg font-semibold text-white mb-1">New persona</h2>
+  <p class="text-zinc-500 text-sm mb-2">Just a name - you'll add the bio and upload data next.</p>
+  <form method="post" action="/personas" class="flex items-end gap-3">
+    <div class="flex-1">
+      <label>Name</label>
+      <input type="text" name="name" class="field" placeholder="e.g. Grandma" required>
+    </div>
+    <button type="submit" class="btn-primary">Create</button>
   </form>
 </div>
 
 <div class="card">
-  <h2>Your personas</h2>
+  <h2 class="text-lg font-semibold text-white mb-1">Your personas</h2>
   {% if not personas %}
-    <p class="muted">No personas yet. Create one above to get started.</p>
+    <p class="text-zinc-500 text-sm py-4">No personas yet. Create one above to get started.</p>
   {% endif %}
   {% for persona in personas %}
     <div class="persona-row">
-      <div>
-        <a href="/personas/{{ persona.id }}"><strong>{{ persona.name }}</strong></a>
+      <div class="flex items-center gap-3">
+        <a href="/personas/{{ persona.id }}" class="text-zinc-100 font-medium hover:text-white no-underline">{{ persona.name }}</a>
         <span class="status-pill status-{{ persona.status }}">{{ persona.status }}</span>
       </div>
-      <a href="/personas/{{ persona.id }}" class="btn secondary" style="margin-top:0;">Open</a>
+      <a href="/personas/{{ persona.id }}" class="btn-secondary">Open</a>
     </div>
   {% endfor %}
 </div>

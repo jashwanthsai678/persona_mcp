@@ -10,11 +10,9 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-import anthropic
-
 from persona_mcp import config, storage
 from persona_mcp.chunking import chunk_messages, chunk_notes
-from persona_mcp.style_profile import build_style_profile, sample_messages_for_profile, save_style_profile
+from persona_mcp.style_profile import StyleProfile, build_style_profile_heuristic, sample_messages_for_profile, save_style_profile
 from persona_mcp.whatsapp_parser import parse_whatsapp_export
 
 # WhatsApp headers contain a date/time + " - " separator before "Sender: text".
@@ -27,6 +25,7 @@ class IngestionReport:
     messages_skipped: int = 0
     chunks_created: int = 0
     style_profile_built: bool = False
+    style_profile: StyleProfile | None = None
     sample_chunks: list[str] | None = None
 
 
@@ -119,11 +118,9 @@ def run_ingestion(
         report.chunks_created += len(chunks)
 
     if not skip_style_profile and all_target_messages:
-        client = anthropic.Anthropic()
         sampled = sample_messages_for_profile(all_target_messages, max_sample_messages)
         if sampled:
-            profile = build_style_profile(sampled, display_name, client)
-            save_style_profile(profile, config.get_style_profile_path(persona_name))
+            report.style_profile = build_style_profile_heuristic(sampled)
             report.style_profile_built = True
 
     return report
@@ -135,7 +132,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--raw-dir", type=Path, default=None, help="Override raw data directory")
     parser.add_argument("--target-sender", default=None, help="Exact sender name in the export to treat as the persona (auto-detected if omitted)")
     parser.add_argument("--reset", action="store_true", help="Wipe existing vector store before ingesting")
-    parser.add_argument("--skip-style-profile", action="store_true", help="Skip the Anthropic API call for style extraction")
+    parser.add_argument("--skip-style-profile", action="store_true", help="Skip heuristic style-profile extraction")
     parser.add_argument("--max-sample-messages", type=int, default=300)
     args = parser.parse_args(argv)
 
@@ -152,6 +149,9 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Messages parsed: {report.messages_parsed}  (skipped: {report.messages_skipped})")
     print(f"Chunks created: {report.chunks_created}")
     print(f"Style profile built: {report.style_profile_built}")
+    if report.style_profile is not None:
+        save_style_profile(report.style_profile, config.get_style_profile_path(args.persona))
+        print(f"Style profile saved to {config.get_style_profile_path(args.persona)}")
     if report.sample_chunks:
         print("\nSample chunk preview:")
         for i, text in enumerate(report.sample_chunks, 1):

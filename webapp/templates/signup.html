@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Sign up{% endblock %}
 {% block content %}
-<div class="card" style="max-width:360px; margin: 40px auto;">
-  <h2>Create an account</h2>
+<div class="card max-w-sm mx-auto mt-8">
+  <h2 class="text-2xl font-bold tracking-tight text-white mb-1">Create an account</h2>
+  <p class="text-zinc-500 text-sm mb-2">Free to start, no credit card required.</p>
   <form method="post" action="/signup">
     <label>Email</label>
-    <input type="email" name="email" required>
+    <input type="email" name="email" class="field" required>
     <label>Password</label>
-    <input type="password" name="password" required minlength="8">
-    {% if error %}<p class="error">{{ error }}</p>{% endif %}
-    <button type="submit">Sign up</button>
+    <input type="password" name="password" class="field" required minlength="8">
+    {% if error %}<p class="text-red-400 text-sm mt-2">{{ error }}</p>{% endif %}
+    <button type="submit" class="btn-primary w-full mt-6">Sign up</button>
   </form>
-  <p class="muted">Already have an account? <a href="/login">Log in</a></p>
+  <p class="text-zinc-500 text-sm mt-5">Already have an account?
+    <a href="/login" class="text-indigo-400 hover:text-indigo-300">Log in</a></p>
 </div>
 {% endblock %}

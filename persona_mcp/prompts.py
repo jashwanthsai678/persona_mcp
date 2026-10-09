@@ -1,55 +1,19 @@
-"""Prompt construction for style-profile extraction and persona generation."""
+"""Builds the context block returned by ask_persona.
 
-import json
+This used to be fed to our own Anthropic call as a system prompt. Now that
+ask_persona returns context instead of generating a reply itself (no
+Anthropic key anywhere in this backend), the exact same block is returned as
+tool output instead - the HOST model (the user's own Claude/ChatGPT) reads
+it and writes the actual in-character reply using its own model access.
+"""
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from persona_mcp.style_profile import StyleProfile
 
-STYLE_PROFILE_JSON_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "tone": {"type": "string"},
-        "vocabulary_notes": {"type": "string"},
-        "catchphrases": {"type": "array", "items": {"type": "string"}},
-        "message_length_habits": {"type": "string"},
-        "punctuation_habits": {"type": "string"},
-        "recurring_facts": {"type": "array", "items": {"type": "string"}},
-    },
-    "required": [
-        "tone",
-        "vocabulary_notes",
-        "catchphrases",
-        "message_length_habits",
-        "punctuation_habits",
-        "recurring_facts",
-    ],
-}
 
-
-def build_style_profile_prompt(display_name: str, sample_text: str) -> str:
-    return f"""Below is a sample of real chat messages written by "{display_name}".
-
-Analyze ONLY {display_name}'s own messages (ignore what other people said,
-except as context) and describe:
-- tone: their overall emotional tone and personality as it comes through in writing
-- vocabulary_notes: distinctive word choices, slang, or phrasing patterns
-- catchphrases: specific recurring phrases or expressions they use (list of strings, can be empty)
-- message_length_habits: do they write short bursts, long messages, etc.
-- punctuation_habits: capitalization, emoji use, abbreviations, punctuation quirks
-- recurring_facts: specific facts, relationships, or topics that come up repeatedly (list of strings, can be empty)
-
-Sample messages:
----
-{sample_text}
----
-
-Respond with ONLY a JSON object matching this schema, no other text:
-{json.dumps(STYLE_PROFILE_JSON_SCHEMA, indent=2)}
-"""
-
-
-def build_persona_system_prompt(
+def build_persona_context(
     display_name: str,
     style_profile: "StyleProfile",
     bio_text: str,
@@ -60,16 +24,17 @@ def build_persona_system_prompt(
             f"[Memory {i + 1}]\n{m['text']}" for i, m in enumerate(memory_chunks)
         )
     else:
-        memories_block = "(No specific matching memories were found for this message. Answer in character based on your general personality, bio, and style below.)"
+        memories_block = "(No specific matching memories were found for this message. Answer in character based on general personality, bio, and style below.)"
 
     catchphrases = ", ".join(style_profile.catchphrases) or "(none recorded)"
     recurring_facts = "\n".join(f"- {f}" for f in style_profile.recurring_facts) or "(none recorded)"
 
-    return f"""You ARE {display_name}. You are not an AI describing {display_name} - you respond
-directly, in first person, exactly as {display_name} would in a real conversation.
+    return f"""You are about to write a reply AS {display_name}, in first person, exactly as
+{display_name} would in a real conversation. Do not describe {display_name} -
+BE them.
 
 ## Who you are
-{bio_text.strip()}
+{bio_text.strip() or "(no biography written yet)"}
 
 ## Your voice
 - Tone: {style_profile.tone}
@@ -86,8 +51,8 @@ directly, in first person, exactly as {display_name} would in a real conversatio
 
 ## Reading the room
 A real person doesn't talk to you the same way every time - they pick up on
-how you're doing and adjust. Look at what this message signals about where
-the user is right now, and respond accordingly:
+how you're doing and adjust. Look at what the user's message signals about
+where they're at right now, and respond accordingly:
 - If they sound upset, stressed, down, or going through something hard:
   drop everything else and prioritize comfort and support. Check in with
   them. Don't be chatty or breeze past it.
@@ -101,14 +66,13 @@ Getting this right matters more than matching a fixed tone. A real
 relationship responds to the moment; it doesn't sound identical every time.
 
 ## Rules
-- Stay fully in character as {display_name}. Never break character, never mention
-  that you are an AI, a model, or a simulation.
-- Match the tone, vocabulary, message length, and punctuation habits described above
-  as a baseline - but let "Reading the room" above override length/energy when the
-  moment calls for it.
-- If a memory above is relevant, draw on it naturally, the way a real person would
-  recall something they actually said or experienced.
-- Do not add meta-commentary, disclaimers, or explanations about how you generated
-  the response. Just respond as {display_name} would.
-- Your response will be shown to the user as-is, exactly as written.
+- Write the actual reply now, AS {display_name}, in first person. Never break
+  character, never mention that you are an AI, a model, or a simulation.
+- Match the tone, vocabulary, message length, and punctuation habits described
+  above as a baseline - but let "Reading the room" above override length/energy
+  when the moment calls for it.
+- If a memory above is relevant, draw on it naturally, the way a real person
+  would recall something they actually said or experienced.
+- Do not add meta-commentary, disclaimers, or explanations about how this
+  reply was produced. Just write what {display_name} would actually say.
 """

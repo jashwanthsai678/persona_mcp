@@ -1,42 +1,58 @@
 {% extends "base.html" %}
 {% block title %}{{ persona.name }}{% endblock %}
 {% block content %}
-<p><a href="/" class="muted">&larr; Back to dashboard</a></p>
+<a href="/" class="text-zinc-500 hover:text-zinc-300 text-sm no-underline">&larr; Back to dashboard</a>
+
+<div class="flex items-center gap-3 mt-4 mb-6">
+  <h1 class="text-2xl font-bold tracking-tight text-white">{{ persona.name }}</h1>
+  <span class="status-pill status-{{ persona.status }}">{{ persona.status }}</span>
+</div>
+{% if persona.status_message %}<p class="text-zinc-500 text-sm -mt-4 mb-6">{{ persona.status_message }}</p>{% endif %}
 
 <div class="card">
-  <h2>{{ persona.name }}
-    <span class="status-pill status-{{ persona.status }}">{{ persona.status }}</span>
-  </h2>
-  {% if persona.status_message %}<p class="muted">{{ persona.status_message }}</p>{% endif %}
-
-  <h3>1. Biography / relationship context</h3>
+  <div class="flex items-center gap-3 mb-4">
+    <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20">1</span>
+    <h2 class="text-lg font-semibold text-white">Biography / relationship context</h2>
+  </div>
   <form method="post" action="/personas/{{ persona.id }}/bio">
-    <textarea name="bio" placeholder="Who are they? How do you know them? Anything the assistant should know.">{{ bio_text }}</textarea>
-    <button type="submit">Save biography</button>
+    <textarea name="bio" class="field" placeholder="Who are they? How do you know them? Anything the assistant should know.">{{ bio_text }}</textarea>
+    <button type="submit" class="btn-primary mt-4">Save biography</button>
   </form>
+</div>
 
-  <h3>2. Upload data</h3>
+<div class="card">
+  <div class="flex items-center gap-3 mb-4">
+    <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20">2</span>
+    <h2 class="text-lg font-semibold text-white">Upload data</h2>
+  </div>
   <form method="post" action="/personas/{{ persona.id }}/upload" enctype="multipart/form-data">
     <label>Chat export / notes (.txt or .md, multiple allowed)</label>
-    <input type="file" name="files" multiple required accept=".txt,.md">
+    <input type="file" name="files" multiple required accept=".txt,.md"
+           class="field file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-zinc-800 file:text-zinc-200 file:text-sm">
     <label>Exact sender name in the export (optional - auto-detected if left blank)</label>
-    <input type="text" name="target_sender" placeholder="e.g. Grandma Rose">
-    <button type="submit">Upload &amp; process</button>
+    <input type="text" name="target_sender" class="field" placeholder="e.g. Grandma Rose">
+    <button type="submit" class="btn-primary mt-4">Upload &amp; process</button>
   </form>
-  <p class="muted">Re-uploading replaces the previous memory for this persona.</p>
+  <p class="text-zinc-500 text-xs mt-3">Re-uploading replaces the previous memory for this persona.</p>
+</div>
 
-  <h3>3. Connect</h3>
+<div class="card">
+  <div class="flex items-center gap-3 mb-4">
+    <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20">3</span>
+    <h2 class="text-lg font-semibold text-white">Connect</h2>
+  </div>
   {% if persona.status == "ready" %}
-    <p>Paste this URL into Claude, ChatGPT, or any MCP-compatible client as a remote MCP server:</p>
-    <code class="mcp-link">{{ mcp_url }}</code>
+    <p class="text-zinc-400 text-sm mb-3">Paste this URL into Claude, ChatGPT, or any MCP-compatible client as a remote MCP server:</p>
   {% else %}
-    <p class="muted">The MCP link will work once processing finishes, but here it is already if you want to connect early:</p>
-    <code class="mcp-link">{{ mcp_url }}</code>
+    <p class="text-zinc-500 text-sm mb-3">The MCP link will work once processing finishes, but here it is already if you want to connect early:</p>
   {% endif %}
+  <code class="mcp-link">{{ mcp_url }}</code>
+</div>
 
-  <h3 style="margin-top:28px;">Danger zone</h3>
+<div class="card border-red-500/20">
+  <h2 class="text-lg font-semibold text-red-400 mb-3">Danger zone</h2>
   <form method="post" action="/personas/{{ persona.id }}/delete" onsubmit="return confirm('Delete this persona and all its memories permanently?');">
-    <button type="submit" class="danger">Delete persona</button>
+    <button type="submit" class="btn-danger">Delete persona</button>
   </form>
 </div>
 {% endblock %}
