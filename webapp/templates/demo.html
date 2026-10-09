@@ -104,12 +104,16 @@
         <h2 class="text-zinc-100 font-medium">What a conversation actually looks like</h2>
       </div>
       <p class="text-zinc-500 text-xs mb-4">
-        Illustrative example below, written to match the real retrieved
-        memories and style profile shown above - this is what Claude would
-        write using the context this persona's tools return.
+        Illustrative examples below, written to match the real retrieved
+        memories and style profile shown above - this is what Claude writes
+        using the context this persona's tools return. Two things matter
+        more than anything else: it actually sounds like her, not a generic
+        assistant, and it picks up on how you're doing, not just what you
+        asked.
       </p>
 
-      <div class="space-y-3">
+      <h3 class="text-zinc-300 text-xs font-semibold uppercase tracking-wide mb-2">Talking like her</h3>
+      <div class="space-y-3 mb-6">
         <div class="flex justify-end">
           <div class="bg-indigo-600 text-white text-sm rounded-2xl rounded-br-sm px-4 py-2 max-w-[80%]">
             hows the goa trip planning going
@@ -135,6 +139,33 @@
           </div>
         </div>
       </div>
+
+      <h3 class="text-zinc-300 text-xs font-semibold uppercase tracking-wide mb-2">Noticing when you're not okay</h3>
+      <div class="space-y-3">
+        <div class="flex justify-end">
+          <div class="bg-indigo-600 text-white text-sm rounded-2xl rounded-br-sm px-4 py-2 max-w-[80%]">
+            feeling really down today, work has just been a lot
+          </div>
+        </div>
+        <div class="flex justify-start">
+          <div class="bg-zinc-800 text-zinc-100 text-sm rounded-2xl rounded-bl-sm px-4 py-2 max-w-[80%]">
+            oh babe, come here. I'm sorry today's been so heavy. you don't have
+            to explain it all right now if you don't want to - I'm just here.
+            what do you need, do you want to vent or do you want a distraction?
+          </div>
+        </div>
+      </div>
+      <p class="text-zinc-500 text-xs mt-4">
+        No special "support mode" was switched on for that second one - the
+        same tool call just read the message differently and responded the
+        way she actually would, drawing on how she's shown care before,
+        instead of defaulting to her usual upbeat energy.
+      </p>
+      <p class="text-zinc-500 text-xs mt-3">
+        And both of these conversations get remembered - new facts get saved
+        as they come up, and a short summary gets saved automatically when
+        the session ends, so next time she already knows what happened.
+      </p>
     </div>
 
     <!-- Step 5: The real link -->

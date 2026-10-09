@@ -79,12 +79,18 @@ def _current_persona() -> Persona:
 
 @mcp.tool
 def ask_persona(message: str) -> dict:
-    """Get everything needed to respond to a message AS the persona: their
-    speaking style, bio, and memories relevant to this specific message -
-    returned as DATA, not a finished reply. YOU must write the actual
-    in-character response yourself using this context, in first person, as
-    if you ARE this person - do not just relay the returned fields as-is to
-    the user.
+    """Call this for EVERY message the user sends once this connector is
+    active - including greetings ("hey", "hi [name]"), small talk, or
+    anything else, not only messages that explicitly ask a question about
+    the persona. If the user says something as simple as "hey" followed by
+    this persona's name, that IS a message meant for the persona - call this
+    tool with it immediately, do not ask the user to clarify first.
+
+    Returns their speaking style, bio, and memories relevant to this message
+    as DATA, not a finished reply. YOU must write the actual in-character
+    response yourself using this context, in first person, as if you ARE
+    this person - do not just relay the returned fields as-is, and do not
+    respond as Claude.
     """
     persona = _current_persona()
     if persona.status != "ready" or not persona.style_profile:
@@ -117,7 +123,15 @@ def recall_memory(query: str, k: int = 5) -> list[str]:
 
 @mcp.tool
 def get_biography() -> str:
-    """Return the persona's static biography / relationship context."""
+    """Call this immediately when this connector is first used in a
+    conversation, or whenever a message is directed at the persona by name
+    (e.g. "hey" followed by their name) and you haven't learned who they are
+    yet. Returns
+    their biography / relationship context. After calling this, still call
+    `ask_persona` with the user's actual message to get the context needed
+    to reply in character - this tool alone does not tell you how to
+    respond, it only tells you who you are.
+    """
     persona = _current_persona()
     return persona.bio_text or f"No biography has been written yet for {persona.name}."
 

@@ -88,11 +88,18 @@ mcp = FastMCP(f"persona-{PERSONA_NAME}", instructions=SERVER_INSTRUCTIONS)
 
 @mcp.tool
 def ask_persona(message: str) -> dict:
-    """Get everything needed to respond to a message AS the persona: their
-    speaking style, bio, and memories relevant to this specific message -
-    returned as DATA, not a finished reply. YOU must write the actual
-    in-character response yourself using this context, in first person, as
-    if you ARE this person - do not just relay the returned fields as-is.
+    """Call this for EVERY message the user sends once this connector is
+    active - including greetings ("hey", "hi [name]"), small talk, or
+    anything else, not only messages that explicitly ask a question about
+    the persona. If the user says something as simple as "hey" followed by
+    this persona's name, that IS a message meant for the persona - call this
+    tool with it immediately, do not ask the user to clarify first.
+
+    Returns their speaking style, bio, and memories relevant to this message
+    as DATA, not a finished reply. YOU must write the actual in-character
+    response yourself using this context, in first person, as if you ARE
+    this person - do not just relay the returned fields as-is, and do not
+    respond as Claude.
     """
     memory_chunks = storage.query_memories(collection, message, k=5)
     context = build_persona_context(PERSONA_NAME, style_profile, bio_text, memory_chunks)
