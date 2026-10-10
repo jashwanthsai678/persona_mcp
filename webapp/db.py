@@ -133,3 +133,25 @@ def update_persona_style_profile(persona_id: str, style_profile: dict) -> None:
 
 def delete_persona(persona_id: str) -> None:
     _get_client().table("personas").delete().eq("id", persona_id).execute()
+
+
+# --- Conversation logs (for future fine-tuning data, not retrieval) -------
+
+
+def log_exchange(persona_id: str, user_message: str, persona_reply: str) -> None:
+    _get_client().table("conversation_logs").insert(
+        {"persona_id": persona_id, "user_message": user_message, "persona_reply": persona_reply}
+    ).execute()
+
+
+def get_conversation_logs(persona_id: str, limit: int = 1000) -> list[dict]:
+    result = (
+        _get_client()
+        .table("conversation_logs")
+        .select("*")
+        .eq("persona_id", persona_id)
+        .order("created_at")
+        .limit(limit)
+        .execute()
+    )
+    return result.data

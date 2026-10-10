@@ -25,3 +25,20 @@ create table if not exists personas (
 
 create index if not exists idx_personas_owner on personas(owner_id);
 create index if not exists idx_personas_token on personas(mcp_token);
+
+-- Raw (user_message, persona_reply) exchanges, logged turn-by-turn by the
+-- host model via the log_exchange tool. This is separate from the Qdrant
+-- memory store: it exists to accumulate real conversation data that could
+-- later be used as fine-tuning training data, not for retrieval. The host
+-- model has to report both sides itself, since this server never sees the
+-- reply it generates (ask_persona only returns context, never the final
+-- text Claude writes).
+create table if not exists conversation_logs (
+  id uuid primary key default gen_random_uuid(),
+  persona_id uuid not null references personas(id) on delete cascade,
+  user_message text not null,
+  persona_reply text not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_conversation_logs_persona on conversation_logs(persona_id);

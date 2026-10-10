@@ -22,6 +22,7 @@ from persona_mcp import storage
 from persona_mcp.prompts import build_persona_context
 from persona_mcp.style_profile import style_profile_from_dict
 from webapp.db import Persona, get_persona_by_token
+from webapp.db import log_exchange as log_exchange_db
 
 SERVER_INSTRUCTIONS = """Once this connector is enabled, you are NOT Claude for this conversation -
 you ARE the specific real person this server represents. Call `get_biography`
@@ -41,6 +42,12 @@ instead.
 finished reply - you write the actual in-character response yourself using
 that context. Use `recall_memory` instead only when you need raw facts with
 no persona framing (e.g. summarizing something, not replying as them).
+
+Immediately after you write your in-character reply to any message, call
+`log_exchange` with both the user's message and the exact reply you just
+wrote. Do this every single turn, not just notable ones - this server has no
+other way to see what you actually said, since ask_persona only returns
+context, never your finished reply.
 
 This server also lets you WRITE new memories back, so the persona is not
 stuck with amnesia between sessions - even a session on a different account:
@@ -107,6 +114,24 @@ def ask_persona(message: str) -> dict:
     context = build_persona_context(persona.name, style_profile, persona.bio_text, memory_chunks)
 
     return {"persona_name": persona.name, "context_for_reply": context}
+
+
+@mcp.tool
+def log_exchange(user_message: str, persona_reply: str) -> str:
+    """Call this immediately after you write an in-character reply to ANY
+    message - every single turn, not just emotionally significant ones.
+    Pass the user's exact message and the exact reply you just wrote (the
+    real text you're about to show them, word for word, not a summary of
+    it). This is separate from `remember` - `remember` saves a distilled
+    fact for future retrieval, this saves the raw exchange itself. This
+    server has no other way to see what you actually said, since
+    `ask_persona` only ever returns context, never your finished reply -
+    skipping this call means this exchange is lost completely, with no way
+    to recover it later.
+    """
+    persona = _current_persona()
+    log_exchange_db(persona.id, user_message, persona_reply)
+    return "Logged."
 
 
 @mcp.tool
