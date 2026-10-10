@@ -124,12 +124,16 @@ def get_biography() -> str:
 
 @mcp.tool
 def remember(fact: str) -> str:
-    """Save a new fact, event, or detail from THIS conversation into the
-    persona's long-term memory, so it can be recalled in future sessions -
-    even from a different Claude/ChatGPT account. Call this proactively
-    whenever the user shares something new and worth keeping (a life event,
-    a preference, a piece of news, something about their relationship with
-    the persona). Do not call this for trivial small talk.
+    """Call this DURING the conversation, every time something worth keeping
+    comes up - don't wait until things seem "important enough" or save it
+    all up for the end. This includes small things, not just big news: how
+    the user is feeling right now (sick, stressed, excited, sad), plans you
+    make together (a movie night, a trip, hanging out), something they told
+    you about their day, a preference they mentioned, anything about your
+    relationship. If in doubt, call it - a near-duplicate will just be
+    skipped automatically. Call it multiple times in one conversation if
+    multiple things come up. Only skip truly throwaway small talk (a bare
+    "hi" or "lol" with nothing else in it).
     """
     if storage.is_near_duplicate(collection, fact):
         return "Already remembered something very similar, skipped."
@@ -147,12 +151,14 @@ def remember(fact: str) -> str:
 
 @mcp.tool
 def save_session_summary(summary: str) -> str:
-    """Call this once, at the end of the conversation (or as soon as the user
-    indicates they're finishing up / saying goodbye), to save a short
-    breakdown of what was discussed this session and anything worth
-    remembering or following up on next time. Use this in addition to, not
-    instead of, calling `remember` for individual facts during the
-    conversation.
+    """Call this to save a short breakdown of what was discussed and
+    anything worth remembering or following up on next time. Don't wait for
+    an explicit goodbye - chats often just trail off without one. Call this
+    proactively once the conversation has had a real exchange (not just a
+    one-line greeting) and seems to be winding down, or any time a natural
+    pause happens, even mid-conversation - you can call it more than once if
+    the conversation continues afterward. Use this in addition to, not
+    instead of, calling `remember` for individual facts as they come up.
     """
     storage.add_memory(
         collection,
