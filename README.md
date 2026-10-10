@@ -1,4 +1,7 @@
-# Persona MCP
+# JAHA
+
+**Personal AI Memory Connector** — Journey &middot; Autobiographical &middot; Human &middot; AI
+*"Keep their memories connected."*
 
 **Live:** https://persona-mcp.onrender.com (try the [demo](https://persona-mcp.onrender.com/demo) first)
 

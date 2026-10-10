@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Persona MCP{% endblock %}</title>
+  <title>{% block title %}JAHA{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -60,7 +60,7 @@
 <body>
   <header class="sticky top-0 z-50 backdrop-blur-md bg-zinc-950/70 border-b border-white/5">
     <nav class="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-      <a href="/" class="text-white font-semibold tracking-tight no-underline">Persona MCP</a>
+      <a href="/" class="text-white font-semibold tracking-tight no-underline">JAHA</a>
       {% if user %}
         <form method="post" action="/logout" class="flex items-center gap-3 m-0">
           <span class="text-zinc-500 text-sm">{{ user.email }}</span>

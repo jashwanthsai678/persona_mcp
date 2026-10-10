@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Persona MCP - Keep someone's memories close, anywhere you chat</title>
+  <title>JAHA - Keep someone's memories close, anywhere you chat</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -35,7 +35,10 @@
   <!-- Header -->
   <header class="sticky top-0 z-50 backdrop-blur-md bg-zinc-950/70 border-b border-white/5">
     <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <a href="/" class="text-white font-semibold tracking-tight">Persona MCP</a>
+      <a href="/" class="flex items-baseline gap-2">
+        <span class="text-white font-semibold tracking-tight">JAHA</span>
+        <span class="hidden sm:inline text-zinc-500 text-xs uppercase tracking-wide">Personal AI Memory Connector</span>
+      </a>
       <div class="flex items-center gap-2">
         <a href="/login" class="link-fade px-4 py-2 rounded-lg text-sm font-medium text-zinc-300 hover:bg-zinc-900 hover:text-white">Log in</a>
         <a href="/signup" class="btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-zinc-950 hover:bg-zinc-200">Sign up</a>
@@ -46,6 +49,9 @@
   <!-- Hero -->
   <section class="relative spotlight bg-gradient-to-b from-indigo-900/10 via-zinc-950 to-zinc-950">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-28 text-center">
+      <p class="text-indigo-400 text-xs font-semibold uppercase tracking-widest mb-4">
+        JAHA &middot; Personal AI Memory Connector
+      </p>
       <h1 class="text-4xl sm:text-6xl font-bold tracking-tight leading-tight
                  bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
         Keep someone's memories close -
@@ -183,7 +189,30 @@
     </div>
   </section>
 
-  <footer class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 border-t border-white/5 text-center">
+  <footer class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 border-t border-white/5 text-center">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-2xl mx-auto mb-10">
+      <div>
+        <span class="text-indigo-400 font-bold text-lg">J</span>
+        <p class="text-zinc-300 text-sm font-medium mt-1">Journey</p>
+        <p class="text-zinc-500 text-xs mt-1">The experiences and conversations that shape a person.</p>
+      </div>
+      <div>
+        <span class="text-indigo-400 font-bold text-lg">A</span>
+        <p class="text-zinc-300 text-sm font-medium mt-1">Autobiographical</p>
+        <p class="text-zinc-500 text-xs mt-1">Memories drawn from real personal history.</p>
+      </div>
+      <div>
+        <span class="text-indigo-400 font-bold text-lg">H</span>
+        <p class="text-zinc-300 text-sm font-medium mt-1">Human</p>
+        <p class="text-zinc-500 text-xs mt-1">The individual's voice, personality, and identity.</p>
+      </div>
+      <div>
+        <span class="text-indigo-400 font-bold text-lg">A</span>
+        <p class="text-zinc-300 text-sm font-medium mt-1">AI</p>
+        <p class="text-zinc-500 text-xs mt-1">Access through MCP-compatible AI clients.</p>
+      </div>
+    </div>
+    <p class="text-zinc-400 text-sm italic mb-6">"Keep their memories connected."</p>
     <p class="text-sm text-zinc-500">Built for the people you don't want to lose touch with.
       Your data stays private and is never used to train anything beyond your own persona.</p>
   </footer>
